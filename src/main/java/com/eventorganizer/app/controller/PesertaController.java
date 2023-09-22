@@ -4,6 +4,7 @@ import com.eventorganizer.app.payload.PesertaDto;
 import com.eventorganizer.app.service.PesertaService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -27,6 +28,7 @@ public class PesertaController {
         return pesertaService.getAllPesertaByEventId(eventid);
     }
 
+    @PreAuthorize("hasRole('SCANNER')") // kebalik
     @GetMapping
     public List<PesertaDto> getAllPeserta(){
         return pesertaService.getAllPeserta();
