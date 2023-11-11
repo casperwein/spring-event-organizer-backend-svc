@@ -30,7 +30,7 @@ public class PesertaServiceImpl implements PesertaService {
         qrCodeDto.setPesertaid(pesertaRes.getIdpeserta());
         qrCodeDto.setEventid(pesertaRes.getEventid());
         qrCodeDto.setStatus("Open");
-        qrCodeService.generateQRCode(qrCodeDto);
+        qrCodeService.generateQRCode(qrCodeDto, pesertaRes.getNama());
 
         return pesertaRes;
     }

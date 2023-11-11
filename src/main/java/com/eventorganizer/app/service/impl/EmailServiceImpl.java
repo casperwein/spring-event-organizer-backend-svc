@@ -5,6 +5,8 @@ import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.InputStreamSource;
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.UrlResource;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
@@ -25,7 +27,7 @@ public class EmailServiceImpl implements EmailService {
     }
 
     @Override
-    public void sentEmailQRCode(String to, String subject, String body) {
+    public void sentEmailQRCode(String to, String subject, String body, String attachment) {
         try {
             MimeMessage message = javaMailSender.createMimeMessage();
             MimeMessageHelper helper = new MimeMessageHelper(message, true);
@@ -35,21 +37,14 @@ public class EmailServiceImpl implements EmailService {
             helper.setSubject(subject);
             helper.setText(body);
 
-//            File file = new File(attachmentPath);
-//            Path path = Paths.get(attachmentPath);
-//            helper.addAttachment(file.getName(), new InputStreamSource() {
-//                @Override
-//                public InputStream getInputStream() throws IOException {
-//                    return Files.newInputStream(path);
-//                }
-//            });
-//            FileSystemResource fileSystemResource = new FileSystemResource(new File(attachmentPath));
-//            helper.addAttachment(fileSystemResource.getFilename(), fileSystemResource);
+            Path path = Paths.get("public/qrcode-img", attachment);
+            Resource attach = new UrlResource(path.toUri());
+            helper.addAttachment(attachment, attach.getFile());
 
             javaMailSender.send(message);
             System.out.println("sent email successfully");
 
-        } catch (MessagingException e){
+        } catch (MessagingException | IOException e ){
             e.printStackTrace();
         }
     }

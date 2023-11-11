@@ -1,9 +1,11 @@
 package com.eventorganizer.app.service.impl;
 
 import com.eventorganizer.app.entity.User;
+import com.eventorganizer.app.exception.EOAPIException;
 import com.eventorganizer.app.payload.UserDto;
 import com.eventorganizer.app.repository.UserRepository;
 import com.eventorganizer.app.service.UserService;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -20,10 +22,13 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserDto createUser(UserDto userDto) {
-//        String password = userDto.getPassword();
-//        String encryptPswd = passwordEncoder.encode(password);
-//        System.out.println(encryptPswd);
-//        userDto.setPassword(encryptPswd);
+//        if (userRepository.existByUsername(userDto.getUsername())){
+//            throw new EOAPIException(HttpStatus.BAD_REQUEST, "Username already exist!");
+//        }
+
+//        if (userRepository.existByEmail(userDto.getEmail())){
+//            throw new EOAPIException(HttpStatus.BAD_REQUEST, "Email already exist!");
+//        }
 
         User user = mapToEntity(userDto);
 
@@ -51,6 +56,7 @@ public class UserServiceImpl implements UserService {
         userDto.setTelepon(user.getTelepon());
         userDto.setCreatedAt(user.getCreatedAt());
         userDto.setUpdatedAt(user.getUpdatedAt());
+        userDto.setEmail(user.getEmail());
 
         return userDto;
     }
@@ -65,6 +71,7 @@ public class UserServiceImpl implements UserService {
         user.setPassword(userDto.getPassword());
         user.setStatus(userDto.getStatus());
         user.setTelepon(userDto.getTelepon());
+        user.setEmail(userDto.getEmail());
 
         return user;
     }

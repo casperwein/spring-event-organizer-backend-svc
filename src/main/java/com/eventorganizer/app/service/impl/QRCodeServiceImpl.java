@@ -50,7 +50,7 @@ public class QRCodeServiceImpl implements QRCodeService {
     }
 
     @Override
-    public QRCodeDto generateQRCode(QRCodeDto qrCodeDto) {
+    public QRCodeDto generateQRCode(QRCodeDto qrCodeDto, String pesertaName) {
         String QRMsg = "peserta: " + qrCodeDto.getPesertaid() + ", event: " + qrCodeDto.getEventid();
 
         try {
@@ -61,8 +61,9 @@ public class QRCodeServiceImpl implements QRCodeService {
             BitMatrix bitMatrix = qrCodeWriter.encode(QRMsg, BarcodeFormat.QR_CODE, width, height);
             BufferedImage bufferedImage = MatrixToImageWriter.toBufferedImage(bitMatrix);
 
-            String path = "src\\main\\resources\\static\\qrcode\\";
+            String path = "public\\qrcode-img\\";
             UUID fileName =  generateUUID();
+            String attachment = fileName + ".png";
             String filePath = path + fileName + ".png";
             File file = new File(filePath);
             ImageIO.write(bufferedImage, "png", file);
@@ -75,10 +76,14 @@ public class QRCodeServiceImpl implements QRCodeService {
             Peserta peserta = pesertaRepository.findPesertaByidpeserta(qrCodeDto.getPesertaid());
             String email = peserta.getEmail();
             String subject = "Registration Ticket";
-            String body = "Ini adalah QR Code untuk tiket masuk Anda!\n" +
-                    "Tunjukan QR Code ini kepada petugas untuk discan!";
+            String body = "Dear, " + pesertaName+ "\n\n" +
+                    "Ini adalah TIKET masuk Anda! Harap disimpan dengan baik dan " +
+                    "jangan lupa dibawa saat anda datang ke tempat acara.\n" +
+                    "Tunjukan tiket ini kepada petugas untuk discan!\n\n" +
+                    "Terimakasih,\n" +
+                    "EO OFFICIAL";
 
-            emailService.sentEmailQRCode(email, subject, body);
+            emailService.sentEmailQRCode(email, subject, body, attachment);
         } catch (IOException | WriterException  e){
             e.printStackTrace();
             System.out.println("Error generated QRCODE");

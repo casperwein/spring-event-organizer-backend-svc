@@ -20,8 +20,12 @@ public class User {
             strategy = GenerationType.IDENTITY
     )
     private long id;
+    @Column(nullable = false)
     private String nama;
+    @Column(nullable = false, unique = true)
     private String username;
+    private String email;
+    @Column(nullable = false, unique = true)
     private String password;
     private String status;
     private String role;
