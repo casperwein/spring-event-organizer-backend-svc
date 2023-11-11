@@ -7,7 +7,7 @@ import java.util.List;
 
 public interface QRCodeService {
     QRCodeDto addQRCode(QRCodeDto qrCodeDto);
-    QRCodeDto generateQRCode(QRCodeDto qrCodeDto);
+    QRCodeDto generateQRCode(QRCodeDto qrCodeDto, String name);
     List<QRCodeDto> getAllQRCode();
 
     String scanQRCode(long id);
