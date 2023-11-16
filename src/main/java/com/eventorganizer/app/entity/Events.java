@@ -1,36 +1,38 @@
 package com.eventorganizer.app.entity;
 
+import jakarta.mail.Multipart;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDateTime;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.Date;
 
 @Data
 @Entity
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name = "peserta")
-public class Peserta {
+@Table(name = "events")
+public class Events {
     @Id
     @GeneratedValue(
             strategy = GenerationType.IDENTITY
     )
-    private long idpeserta;
+    private long id;
     private String nama;
-    private String email;
-    private String telepon;
-    private String alamat;
-    private String los;
-    private long eventid;
-//    @OneToMany(mappedBy = "pesertaid", cascade = CascadeType.ALL)
-//    private Set<QRCodeEntity> peserta = new HashSet<>();
-
+    private String tempat;
+    private Date start_date;
+    private Date end_date;
+    private int lengthofevent;
+    private long kapasitas;
+    private String keterangan;
+    private String eventpathfiledesc;
+    private String status;
+    private String linkregistration;
     @CreatedDate
     private LocalDateTime createdAt;
     @LastModifiedDate
