@@ -7,18 +7,20 @@ import com.eventorganizer.app.repository.PesertaRepository;
 import com.eventorganizer.app.repository.QRCodeRepository;
 import com.eventorganizer.app.service.EmailService;
 import com.eventorganizer.app.service.QRCodeService;
+import com.eventorganizer.app.util.Utils;
 import com.google.zxing.BarcodeFormat;
 import com.google.zxing.WriterException;
 import com.google.zxing.client.j2se.MatrixToImageWriter;
 import com.google.zxing.common.BitMatrix;
 import com.google.zxing.qrcode.QRCodeWriter;
-import jakarta.mail.MessagingException;
 import org.springframework.stereotype.Service;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -28,11 +30,21 @@ public class QRCodeServiceImpl implements QRCodeService {
     private QRCodeRepository qrCodeRepository;
     private PesertaRepository pesertaRepository;
     private EmailService emailService;
+    private final Path path;
+    private String pathDir = "public\\qrcode-img\\";
+
 
     public QRCodeServiceImpl(QRCodeRepository qrCodeRepository, EmailService emailService, PesertaRepository pesertaRepository) {
         this.qrCodeRepository = qrCodeRepository;
         this.emailService = emailService;
         this.pesertaRepository  = pesertaRepository;
+
+        this.path = Path.of(pathDir).toAbsolutePath().normalize();
+        try {
+            Files.createDirectories(this.path);
+        } catch (IOException e){
+            throw  new RuntimeException("Gagal membuat folder QRCode!", e);
+        }
     }
 
     @Override
@@ -61,8 +73,9 @@ public class QRCodeServiceImpl implements QRCodeService {
             BitMatrix bitMatrix = qrCodeWriter.encode(QRMsg, BarcodeFormat.QR_CODE, width, height);
             BufferedImage bufferedImage = MatrixToImageWriter.toBufferedImage(bitMatrix);
 
+            Utils utils = new Utils();
             String path = "public\\qrcode-img\\";
-            UUID fileName =  generateUUID();
+            UUID fileName =  utils.generateUUID();
             String attachment = fileName + ".png";
             String filePath = path + fileName + ".png";
             File file = new File(filePath);
@@ -76,10 +89,7 @@ public class QRCodeServiceImpl implements QRCodeService {
             Peserta peserta = pesertaRepository.findPesertaByidpeserta(qrCodeDto.getPesertaid());
             String email = peserta.getEmail();
             String subject = "Registration Ticket";
-            String body = "Dear, " + pesertaName+ "\n\n" +
-                    "Ini adalah TIKET masuk Anda! Harap disimpan dengan baik dan " +
-                    "jangan lupa dibawa saat anda datang ke tempat acara.\n" +
-                    "Tunjukan tiket ini kepada petugas untuk discan!\n\n" +
+            String body = "Dear, " + pesertaName+ "\n\nIni adalah TIKET masuk Anda! Harap disimpan dengan baik dan jangan lupa dibawa saat anda datang ke tempat acara.\n Tunjukan tiket ini kepada petugas untuk discan!\n\n" +
                     "Terimakasih,\n" +
                     "EO OFFICIAL";
 
@@ -101,14 +111,9 @@ public class QRCodeServiceImpl implements QRCodeService {
     @Override
     public String scanQRCode(long id) {
         QRCodeEntity qrCodeEntity = qrCodeRepository.findBarcodeById(id);
-        qrCodeEntity.setStatus("Close");
+        qrCodeEntity.setStatus("CLOSE");
         qrCodeRepository.save(qrCodeEntity);
         return "Update Successfully";
-    }
-
-    public UUID generateUUID(){
-        UUID uuid = UUID.randomUUID();
-        return uuid;
     }
 
     public QRCodeDto mapToDTO(QRCodeEntity qrCodeEntity){

@@ -1,34 +1,63 @@
 package com.eventorganizer.app.controller;
 
+import com.eventorganizer.app.payload.CustomeResponse;
 import com.eventorganizer.app.payload.PesertaDto;
 import com.eventorganizer.app.service.PesertaService;
+import com.eventorganizer.app.util.Utils;
+import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @RestController
 @RequestMapping("/spring/eo/v1/peserta")
 public class PesertaController {
     private PesertaService pesertaService;
+    Utils utils = new Utils();
 
     public PesertaController(PesertaService pesertaService) {
         this.pesertaService = pesertaService;
     }
 
     @PostMapping
-    public ResponseEntity<PesertaDto> createPeserta(@RequestBody PesertaDto pesertaDto){
-        return new ResponseEntity<>(pesertaService.createPeserta(pesertaDto), HttpStatus.CREATED);
+    public ResponseEntity<CustomeResponse> createPeserta(@RequestBody PesertaDto pesertaDto){
+        PesertaDto peserta = pesertaService.createPeserta(pesertaDto);
+        CustomeResponse customeResponse = utils.customeResponses();
+        List<PesertaDto> pesertaDtos = new ArrayList<>();
+        pesertaDtos.add(peserta);
+        customeResponse.setData(pesertaDtos);
+        customeResponse.setStatusCode(HttpServletResponse.SC_CREATED);
+
+        return new ResponseEntity<>(customeResponse, HttpStatus.CREATED);
     }
 
     @GetMapping("/event/{id}")
-    public List<PesertaDto> getPesertaByEventId(@PathVariable(value = "id") long eventid){
-        return pesertaService.getAllPesertaByEventId(eventid);
+    public ResponseEntity<CustomeResponse> getPesertaByEventId(@PathVariable(value = "id") long eventid){
+        List<PesertaDto> pesertas = pesertaService.getAllPesertaByEventId(eventid);
+        CustomeResponse customeResponse = utils.customeResponses();
+        customeResponse.setData(pesertas);
+        return new ResponseEntity<>(customeResponse, HttpStatus.OK);
     }
 
     @GetMapping
-    public List<PesertaDto> getAllPeserta(){
-        return pesertaService.getAllPeserta();
+    public ResponseEntity<CustomeResponse> getAllPeserta(){
+        List<PesertaDto> pesertas = pesertaService.getAllPeserta();
+        CustomeResponse customeResponse = utils.customeResponses();
+        customeResponse.setData(pesertas);
+        return new ResponseEntity<>(customeResponse, HttpStatus.OK);
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<CustomeResponse> getPesertaById(@PathVariable(value = "id") long id){
+        PesertaDto peserta = pesertaService.getPesertaById(id);
+        CustomeResponse customeResponse = utils.customeResponses();
+        List<PesertaDto> pesertaDtos = new ArrayList<>();
+        pesertaDtos.add(peserta);
+        customeResponse.setData(pesertaDtos);
+
+        return new ResponseEntity<>(customeResponse, HttpStatus.OK);
     }
 }

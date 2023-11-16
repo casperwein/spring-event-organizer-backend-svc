@@ -20,6 +20,9 @@ public class QRCodeEntity {
             strategy = GenerationType.IDENTITY
     )
     private long id;
+//    @ManyToOne(optional = false)
+//    @JoinColumn(name = "pesertaid", nullable = false)
+//    private Peserta pesertaid;
     private long pesertaid;
     private long eventid;
     private String status;

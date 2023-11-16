@@ -8,4 +8,5 @@ public interface PesertaService {
     PesertaDto createPeserta(PesertaDto pesertaDto);
     List<PesertaDto> getAllPesertaByEventId(long eventid);
     List<PesertaDto> getAllPeserta();
+    PesertaDto getPesertaById(long id);
 }

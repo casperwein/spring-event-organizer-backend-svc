@@ -1,5 +1,6 @@
 package com.eventorganizer.app.payload;
 
+import com.eventorganizer.app.entity.Peserta;
 import lombok.Data;
 
 import java.time.LocalDateTime;

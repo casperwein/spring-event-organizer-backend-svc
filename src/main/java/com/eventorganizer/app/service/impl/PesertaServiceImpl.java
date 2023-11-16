@@ -1,6 +1,7 @@
 package com.eventorganizer.app.service.impl;
 
 import com.eventorganizer.app.entity.Peserta;
+import com.eventorganizer.app.exception.ResourceNotFoundException;
 import com.eventorganizer.app.payload.PesertaDto;
 import com.eventorganizer.app.payload.QRCodeDto;
 import com.eventorganizer.app.repository.PesertaRepository;
@@ -8,6 +9,9 @@ import com.eventorganizer.app.service.PesertaService;
 import com.eventorganizer.app.service.QRCodeService;
 import org.springframework.stereotype.Service;
 
+import javax.swing.text.DateFormatter;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -25,12 +29,13 @@ public class PesertaServiceImpl implements PesertaService {
         Peserta peserta = mapToEntity(pesertaDto);
         Peserta newPeserta = pesertaRepository.save(peserta);
         PesertaDto pesertaRes = mapToDTO(newPeserta);
+//        System.out.println(pesertaRes);
 
         QRCodeDto qrCodeDto = new QRCodeDto();
-        qrCodeDto.setPesertaid(pesertaRes.getIdpeserta());
-        qrCodeDto.setEventid(pesertaRes.getEventid());
-        qrCodeDto.setStatus("Open");
-        qrCodeService.generateQRCode(qrCodeDto, pesertaRes.getNama());
+        qrCodeDto.setPesertaid(newPeserta.getIdpeserta());
+        qrCodeDto.setEventid(newPeserta.getEventid());
+        qrCodeDto.setStatus("OPEN");
+        qrCodeService.generateQRCode(qrCodeDto, newPeserta.getNama());
 
         return pesertaRes;
     }
@@ -45,6 +50,13 @@ public class PesertaServiceImpl implements PesertaService {
     public List<PesertaDto> getAllPeserta() {
         List<Peserta> pesertas = pesertaRepository.findAll();
         return pesertas.stream().map(ps -> mapToDTO(ps)).collect(Collectors.toList());
+    }
+
+    @Override
+    public PesertaDto getPesertaById(long id) {
+        Peserta peserta = pesertaRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Peserta", "peserta", id));
+        PesertaDto pesertaDto = mapToDTO(peserta);
+        return pesertaDto;
     }
 
     public PesertaDto mapToDTO(Peserta peserta){
