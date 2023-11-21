@@ -1,17 +1,17 @@
 package com.eventorganizer.app.service.impl;
 
 import com.eventorganizer.app.entity.Events;
-import com.eventorganizer.app.entity.Peserta;
 import com.eventorganizer.app.exception.ResourceNotFoundException;
 import com.eventorganizer.app.payload.CustomeResponse;
 import com.eventorganizer.app.payload.EventsDto;
-import com.eventorganizer.app.payload.PesertaDto;
 import com.eventorganizer.app.repository.EventsRepository;
 import com.eventorganizer.app.repository.PesertaRepository;
 import com.eventorganizer.app.repository.QRCodeRepository;
 import com.eventorganizer.app.service.EventsService;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
+import java.time.Month;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -105,6 +105,42 @@ public class EventsServiceImpl implements EventsService {
         data.put("event", event);
 
         customeResponse.setData(data);
+        return customeResponse;
+    }
+
+    @Override
+    public CustomeResponse getEventsForDashboard() {
+        List<Events> events = eventsRepository.findAll();
+        CustomeResponse customeResponse = new CustomeResponse();
+        Map<String, Object> data = new HashMap<>();
+
+        LocalDate now = LocalDate.now();
+        Month thisMonth = now.getMonth();
+
+        long totalEvent = eventsRepository.count();
+        long totalPeserta = pesertaRepository.count();
+        long totalEventDone = eventsRepository.getTotalEventDone();
+        long totalEventIncoming = eventsRepository.getTotalEventIncoming();
+        long totalPesertaScanned = qrCodeRepository.getTotalScanned();
+        long totalPesertaNotScanned = qrCodeRepository.getTotalNotScanned();
+        List<Events> eventsThisMonts = events.stream().filter(
+                event -> event.getStart_date().getMonth() == thisMonth).collect(Collectors.toList());
+        long totalEventThisMonth = eventsThisMonts.size();
+        long totalKapasitas = events.stream().mapToLong(Events::getKapasitas).sum();
+        long slotNotRegister = totalKapasitas - totalPeserta;
+
+        data.put("totalEvent", totalEvent);
+        data.put("totalPeserta", totalPeserta);
+        data.put("totalEventDone", totalEventDone);
+        data.put("totalEventIncoming", totalEventIncoming);
+        data.put("totalPesertaScanned", totalPesertaScanned);
+        data.put("totalPesertaNotScanned", totalPesertaNotScanned);
+        data.put("slotNotRegister", slotNotRegister);
+        data.put("eventThisMonth", totalEventThisMonth);
+        data.put("listEventThisMonth", eventsThisMonts);
+
+        customeResponse.setData(data);
+
         return customeResponse;
     }
 

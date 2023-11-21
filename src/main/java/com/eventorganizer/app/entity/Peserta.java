@@ -27,6 +27,7 @@ public class Peserta {
     private String telepon;
     private String alamat;
     private String los;
+    @Column(name = "eventid")
     private long eventid;
 //    @OneToMany(mappedBy = "pesertaid", cascade = CascadeType.ALL)
 //    private Set<QRCodeEntity> peserta = new HashSet<>();

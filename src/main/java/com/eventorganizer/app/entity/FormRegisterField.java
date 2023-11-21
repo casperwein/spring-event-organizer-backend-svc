@@ -6,7 +6,6 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDateTime;
 
@@ -14,24 +13,27 @@ import java.time.LocalDateTime;
 @Entity
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name = "users")
-public class User {
+@Table(name = "form_register")
+public class FormRegisterField {
     @Id
     @GeneratedValue(
             strategy = GenerationType.IDENTITY
     )
     private long id;
-    @Column(nullable = false)
+    private long eventid;
     private String nama;
-    @Column(nullable = false, unique = true)
-    private String username;
     private String email;
-    @Column(nullable = false, unique = true)
-    private String password;
-    private String status;
-    private String role;
     private String telepon;
-//    private MultipartFile gambar;
+    private String alamat;
+    private String los;
+    private String nik;
+    private String mediasosial;
+    private String no_kk;
+    private String agama;
+    private String kec;
+    private String kota;
+    private String provinsi;
+    private String kelurahan;
 
     @CreatedDate
     private LocalDateTime createdAt;
@@ -46,5 +48,4 @@ public class User {
     protected void onUpdate() {
         updatedAt = LocalDateTime.now();
     }
-
 }

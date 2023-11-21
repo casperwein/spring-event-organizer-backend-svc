@@ -9,6 +9,7 @@ import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Date;
 
@@ -25,8 +26,8 @@ public class Events {
     private long id;
     private String nama;
     private String tempat;
-    private Date start_date;
-    private Date end_date;
+    private LocalDateTime start_date;
+    private LocalDateTime end_date;
     private int lengthofevent;
     private long kapasitas;
     private String keterangan;

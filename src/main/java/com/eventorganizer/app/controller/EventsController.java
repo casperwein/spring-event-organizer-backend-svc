@@ -73,6 +73,13 @@ public class EventsController {
         return new ResponseEntity<>(customeResponse, HttpStatus.OK);
     }
 
+    @GetMapping("/dataForDashboard")
+    public ResponseEntity<CustomeResponse> getDataForDashboard(){
+        CustomeResponse customeResponse = utils.customeResponses();
+        customeResponse.setData(eventsService.getEventsForDashboard().getData());
+        return new ResponseEntity<>(customeResponse, HttpStatus.OK);
+    }
+
     @DeleteMapping("/{id}")
     public CustomeResponse deleteEvents(@PathVariable(name = "id") long id){
         String event = eventsService.deleteEvent(id);

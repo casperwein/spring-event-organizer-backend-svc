@@ -13,8 +13,8 @@ public class EventsDto {
     private long id;
     private String nama;
     private String tempat;
-    private Date start_date;
-    private Date end_date;
+    private LocalDateTime start_date;
+    private LocalDateTime end_date;
     private int lengthofevent;
     private long kapasitas;
     private String keterangan;
