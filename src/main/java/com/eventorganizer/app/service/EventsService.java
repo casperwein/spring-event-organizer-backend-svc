@@ -1,5 +1,6 @@
 package com.eventorganizer.app.service;
 
+import com.eventorganizer.app.entity.Events;
 import com.eventorganizer.app.payload.CustomeResponse;
 import com.eventorganizer.app.payload.EventsDto;
 
@@ -15,5 +16,6 @@ public interface EventsService {
     String deleteEvent(long id);
     CustomeResponse getEventDetails(long eventId);
     CustomeResponse getEventsForDashboard();
+    Events getEventDocPath(long eventId);
 
 }
