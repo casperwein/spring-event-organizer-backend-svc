@@ -27,7 +27,8 @@ public class EmailServiceImpl implements EmailService {
     }
 
     @Override
-    public void sentEmailQRCode(String to, String subject, String body, String attachment) {
+    public void sentEmailQRCode(String to, String subject, String body,
+                                String attachment, String eventDocPath, String eventName) {
         try {
             MimeMessage message = javaMailSender.createMimeMessage();
             MimeMessageHelper helper = new MimeMessageHelper(message, true);
@@ -38,8 +39,11 @@ public class EmailServiceImpl implements EmailService {
             helper.setText(body);
 
             Path path = Paths.get("public/qrcode-img", attachment);
-            Resource attach = new UrlResource(path.toUri());
-            helper.addAttachment(attachment, attach.getFile());
+            Path eventPathDoc = Paths.get("public/event", eventDocPath);
+            Resource attachQr = new UrlResource(path.toUri());
+            Resource attachEventDoc = new UrlResource(eventPathDoc.toUri());
+            helper.addAttachment(attachment, attachQr.getFile());
+            helper.addAttachment(eventName, attachEventDoc.getFile());
 
             javaMailSender.send(message);
             System.out.println("sent email successfully");

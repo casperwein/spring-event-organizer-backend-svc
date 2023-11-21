@@ -144,6 +144,13 @@ public class EventsServiceImpl implements EventsService {
         return customeResponse;
     }
 
+    @Override
+    public Events getEventDocPath(long eventId) {
+        Events event = eventsRepository.findById(eventId).orElseThrow(
+                () ->  new ResourceNotFoundException("Events", "id", eventId));
+        return event;
+    }
+
     public EventsDto mapToDto(Events events){
         EventsDto eventsDto = new EventsDto();
 

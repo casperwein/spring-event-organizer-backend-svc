@@ -1,11 +1,13 @@
 package com.eventorganizer.app.service.impl;
 
+import com.eventorganizer.app.entity.Events;
 import com.eventorganizer.app.entity.Peserta;
 import com.eventorganizer.app.entity.QRCodeEntity;
 import com.eventorganizer.app.payload.QRCodeDto;
 import com.eventorganizer.app.repository.PesertaRepository;
 import com.eventorganizer.app.repository.QRCodeRepository;
 import com.eventorganizer.app.service.EmailService;
+import com.eventorganizer.app.service.EventsService;
 import com.eventorganizer.app.service.QRCodeService;
 import com.eventorganizer.app.util.Utils;
 import com.google.zxing.BarcodeFormat;
@@ -16,11 +18,13 @@ import com.google.zxing.qrcode.QRCodeWriter;
 import org.springframework.stereotype.Service;
 
 import javax.imageio.ImageIO;
+import java.lang.String;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -29,15 +33,17 @@ import java.util.stream.Collectors;
 public class QRCodeServiceImpl implements QRCodeService {
     private QRCodeRepository qrCodeRepository;
     private PesertaRepository pesertaRepository;
+    private EventsService eventsService;
     private EmailService emailService;
     private final Path path;
     private String pathDir = "public\\qrcode-img\\";
 
 
-    public QRCodeServiceImpl(QRCodeRepository qrCodeRepository, EmailService emailService, PesertaRepository pesertaRepository) {
+    public QRCodeServiceImpl(QRCodeRepository qrCodeRepository, EventsService eventsService, EmailService emailService, PesertaRepository pesertaRepository) {
         this.qrCodeRepository = qrCodeRepository;
         this.emailService = emailService;
         this.pesertaRepository  = pesertaRepository;
+        this.eventsService = eventsService;
 
         this.path = Path.of(pathDir).toAbsolutePath().normalize();
         try {
@@ -64,6 +70,9 @@ public class QRCodeServiceImpl implements QRCodeService {
     @Override
     public QRCodeDto generateQRCode(QRCodeDto qrCodeDto, String pesertaName) {
         String QRMsg = "peserta: " + qrCodeDto.getPesertaid() + ", event: " + qrCodeDto.getEventid();
+        Events events = eventsService.getEventDocPath(qrCodeDto.getEventid());
+        Peserta peserta = pesertaRepository.findPesertaByidpeserta(qrCodeDto.getPesertaid());
+        Utils utils = new Utils();
 
         try {
             int width = 1000;
@@ -73,7 +82,6 @@ public class QRCodeServiceImpl implements QRCodeService {
             BitMatrix bitMatrix = qrCodeWriter.encode(QRMsg, BarcodeFormat.QR_CODE, width, height);
             BufferedImage bufferedImage = MatrixToImageWriter.toBufferedImage(bitMatrix);
 
-            Utils utils = new Utils();
             String path = "public\\qrcode-img\\";
             UUID fileName =  utils.generateUUID();
             String attachment = fileName + ".png";
@@ -86,14 +94,17 @@ public class QRCodeServiceImpl implements QRCodeService {
             addQRCode(qrCodeDto);
 
             // sent email
-            Peserta peserta = pesertaRepository.findPesertaByidpeserta(qrCodeDto.getPesertaid());
             String email = peserta.getEmail();
-            String subject = "Registration Ticket";
+            String subject = "Tiket " + events.getNama();
             String body = "Dear, " + pesertaName+ "\n\nIni adalah TIKET masuk Anda! Harap disimpan dengan baik dan jangan lupa dibawa saat anda datang ke tempat acara.\n Tunjukan tiket ini kepada petugas untuk discan!\n\n" +
-                    "Terimakasih,\n" +
-                    "EO OFFICIAL";
+                    "Terimakasih\n\n" +
+                    "Best Regards,\n" +
+                    "Event Organizer OFFICIAL";
 
-            emailService.sentEmailQRCode(email, subject, body, attachment);
+            Path eventPath = Paths.get(events.getEventpathfiledesc());
+            String fileEventName = eventPath.getFileName().toString();
+
+            emailService.sentEmailQRCode(email, subject, body, attachment, fileEventName, events.getNama());
         } catch (IOException | WriterException  e){
             e.printStackTrace();
             System.out.println("Error generated QRCODE");
