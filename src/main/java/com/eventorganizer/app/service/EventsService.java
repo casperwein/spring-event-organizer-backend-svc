@@ -14,4 +14,6 @@ public interface EventsService {
     EventsDto getEventsById(long id);
     String deleteEvent(long id);
     CustomeResponse getEventDetails(long eventId);
+    CustomeResponse getEventsForDashboard();
+
 }

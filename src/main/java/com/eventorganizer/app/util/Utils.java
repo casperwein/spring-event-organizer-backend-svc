@@ -4,7 +4,6 @@ import com.eventorganizer.app.payload.CustomeResponse;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.http.HttpStatus;
 
 import java.util.UUID;
 

@@ -11,4 +11,8 @@ public interface QRCodeRepository extends JpaRepository<QRCodeEntity, Long> {
     long getQRTotalScanned(@Param("eventId") long eventId);
     @Query("SELECT COUNT(pesertaid) FROM QRCodeEntity WHERE eventid = :eventId AND status = 'OPEN'")
     long getQRTotalNotScanned(@Param("eventId") long eventId);
+    @Query("SELECT COUNT(*) FROM QRCodeEntity WHERE status = 'OPEN'")
+    long getTotalScanned();
+    @Query("SELECT COUNT(*) FROM QRCodeEntity WHERE status = 'CLOSE'")
+    long getTotalNotScanned();
 }
