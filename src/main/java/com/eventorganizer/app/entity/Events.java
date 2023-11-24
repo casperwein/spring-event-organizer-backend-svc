@@ -28,6 +28,8 @@ public class Events {
     private String tempat;
     private LocalDateTime start_date;
     private LocalDateTime end_date;
+    private LocalDateTime openregist;
+    private LocalDateTime closeregist;
     private int lengthofevent;
     private long kapasitas;
     private String keterangan;

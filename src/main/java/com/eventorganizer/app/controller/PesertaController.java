@@ -24,14 +24,9 @@ public class PesertaController {
 
     @PostMapping
     public ResponseEntity<CustomeResponse> createPeserta(@RequestBody PesertaDto pesertaDto){
-        PesertaDto peserta = pesertaService.createPeserta(pesertaDto);
-        CustomeResponse customeResponse = utils.customeResponses();
-        List<PesertaDto> pesertaDtos = new ArrayList<>();
-        pesertaDtos.add(peserta);
-        customeResponse.setData(pesertaDtos);
-        customeResponse.setStatusCode(HttpServletResponse.SC_CREATED);
-
-        return new ResponseEntity<>(customeResponse, HttpStatus.CREATED);
+        CustomeResponse customeResponse = pesertaService.createPeserta(pesertaDto);
+        customeResponse.setStatusCode(HttpServletResponse.SC_OK);
+        return new ResponseEntity<>(customeResponse, HttpStatus.OK);
     }
 
     @GetMapping("/event/{id}")
