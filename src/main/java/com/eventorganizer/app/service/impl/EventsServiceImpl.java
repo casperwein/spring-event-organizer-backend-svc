@@ -8,6 +8,7 @@ import com.eventorganizer.app.repository.EventsRepository;
 import com.eventorganizer.app.repository.PesertaRepository;
 import com.eventorganizer.app.repository.QRCodeRepository;
 import com.eventorganizer.app.service.EventsService;
+import com.eventorganizer.app.util.Utils;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -21,6 +22,7 @@ public class EventsServiceImpl implements EventsService {
     private PesertaRepository pesertaRepository;
     private  QRCodeRepository qrCodeRepository;
     private FileService fileService;
+    Utils utils = new Utils();
 
     public EventsServiceImpl(EventsRepository eventsRepository, QRCodeRepository qrCodeRepository, PesertaRepository pesertaRepository, FileService fileService) {
         this.eventsRepository = eventsRepository;
@@ -35,8 +37,14 @@ public class EventsServiceImpl implements EventsService {
         eventsDto.setEventpathfiledesc(pathFile);
         Events events = mapToEntity(eventsDto);
         events.setStatus("OPEN");
-        Events saveEvents = eventsRepository.save(events);
-        EventsDto response = mapToDto(saveEvents);
+
+        Events newEvent = eventsRepository.save(events);
+        long eventId = newEvent.getId();
+        String pathLinkRegistration = "file:///E:/DEVELOPER/event-organizer/registration/index.html?event=";
+        events.setLinkregistration(pathLinkRegistration + eventId);
+        eventsRepository.save(newEvent);
+
+        EventsDto response = mapToDto(newEvent);
         return response;
     }
 
@@ -167,6 +175,8 @@ public class EventsServiceImpl implements EventsService {
         eventsDto.setLinkregistration(events.getLinkregistration());
         eventsDto.setCreatedAt(events.getCreatedAt());
         eventsDto.setUpdatedAt(events.getUpdatedAt());
+        eventsDto.setOpenregist(events.getOpenregist());
+        eventsDto.setCloseregist(events.getCloseregist());
 
         return eventsDto;
     }
@@ -185,6 +195,8 @@ public class EventsServiceImpl implements EventsService {
         events.setEventpathfiledesc(eventsDto.getEventpathfiledesc());
         events.setStatus(eventsDto.getStatus());
         events.setLinkregistration(eventsDto.getLinkregistration());
+        events.setOpenregist(eventsDto.getOpenregist());
+        events.setCloseregist(eventsDto.getCloseregist());
 
         return events;
     }

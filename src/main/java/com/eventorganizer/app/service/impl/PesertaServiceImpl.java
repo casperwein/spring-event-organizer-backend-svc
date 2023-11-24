@@ -1,12 +1,17 @@
 package com.eventorganizer.app.service.impl;
 
+import com.eventorganizer.app.entity.Events;
 import com.eventorganizer.app.entity.Peserta;
 import com.eventorganizer.app.exception.ResourceNotFoundException;
+import com.eventorganizer.app.payload.CustomeResponse;
 import com.eventorganizer.app.payload.PesertaDto;
 import com.eventorganizer.app.payload.QRCodeDto;
+import com.eventorganizer.app.repository.EventsRepository;
 import com.eventorganizer.app.repository.PesertaRepository;
 import com.eventorganizer.app.service.PesertaService;
 import com.eventorganizer.app.service.QRCodeService;
+import com.eventorganizer.app.util.Utils;
+import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.stereotype.Service;
 
 import javax.swing.text.DateFormatter;
@@ -19,25 +24,48 @@ import java.util.stream.Collectors;
 public class PesertaServiceImpl implements PesertaService {
     private PesertaRepository pesertaRepository;
     private QRCodeService qrCodeService;
-    public PesertaServiceImpl(PesertaRepository pesertaRepository, QRCodeService qrCodeService) {
+    private EventsRepository eventsRepository;
+
+    public PesertaServiceImpl(PesertaRepository pesertaRepository, EventsRepository eventsRepository, QRCodeService qrCodeService) {
         this.pesertaRepository = pesertaRepository;
         this.qrCodeService = qrCodeService;
+        this.eventsRepository = eventsRepository;
     }
 
     @Override
-    public PesertaDto createPeserta(PesertaDto pesertaDto) {
-        Peserta peserta = mapToEntity(pesertaDto);
-        Peserta newPeserta = pesertaRepository.save(peserta);
-        PesertaDto pesertaRes = mapToDTO(newPeserta);
-//        System.out.println(pesertaRes);
+    public CustomeResponse createPeserta(PesertaDto pesertaDto) {
+        long eventId = pesertaDto.getEventid();
+        Events event = eventsRepository.findById(eventId).orElseThrow(() -> new ResourceNotFoundException("event", "id", eventId));
+        long totalRegistered = pesertaRepository.getTotalPesertaByEventId(eventId);
 
-        QRCodeDto qrCodeDto = new QRCodeDto();
-        qrCodeDto.setPesertaid(newPeserta.getIdpeserta());
-        qrCodeDto.setEventid(newPeserta.getEventid());
-        qrCodeDto.setStatus("OPEN");
-        qrCodeService.generateQRCode(qrCodeDto, newPeserta.getNama());
+        Utils utils = new Utils();
+        CustomeResponse customeResponse = utils.customeResponses();
 
-        return pesertaRes;
+        if (totalRegistered < event.getKapasitas()){
+            if ("OPEN".equalsIgnoreCase(event.getStatus())   ){
+                Peserta peserta = mapToEntity(pesertaDto);
+                Peserta newPeserta = pesertaRepository.save(peserta);
+                PesertaDto pesertaRes = mapToDTO(newPeserta);
+
+                // hit service generated qr code
+                QRCodeDto qrCodeDto = new QRCodeDto();
+                qrCodeDto.setPesertaid(newPeserta.getIdpeserta());
+                qrCodeDto.setEventid(newPeserta.getEventid());
+                qrCodeDto.setStatus("OPEN");
+                qrCodeService.generateQRCode(qrCodeDto, newPeserta.getNama());
+
+                // set response to client
+                String msg = "Registrasi SUCCESS! Tiket masuk dan File deskripsi telah dikirim ke email Anda. " +
+                        "Mohon cek email anda secara Berkala. Terimakasih.";
+                customeResponse.setData(pesertaRes);
+                customeResponse.setMessage(msg);
+            } else {
+                customeResponse.setMessage("Registrasi sudah Tutup!");
+            }
+        } else {
+            customeResponse.setMessage("Kuota Sudah Penuh!");
+        }
+        return customeResponse;
     }
 
     @Override
