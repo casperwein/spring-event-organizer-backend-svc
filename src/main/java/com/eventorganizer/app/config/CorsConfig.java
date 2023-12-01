@@ -13,7 +13,9 @@ public class CorsConfig {
             @Override
             public void addCorsMappings(CorsRegistry registry) {
                 registry.addMapping("/spring/eo/v1/**")
-                        .allowedMethods("GET", "POST", "PUT", "DELETE");
+                        .allowedOrigins("http://localhost:9499")
+                        .allowedMethods("GET", "POST", "PUT", "DELETE")
+                        .allowedHeaders("*");
             }
         };
     }

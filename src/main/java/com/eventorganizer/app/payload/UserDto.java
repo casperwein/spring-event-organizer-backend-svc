@@ -1,5 +1,7 @@
 package com.eventorganizer.app.payload;
 
+import com.eventorganizer.app.entity.Role;
+import lombok.Builder;
 import lombok.Data;
 
 import java.time.LocalDateTime;
@@ -12,7 +14,7 @@ public class UserDto {
     private String username;
     private String password;
     private String status;
-    private String role;
+    private Role role;
     private String telepon;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
