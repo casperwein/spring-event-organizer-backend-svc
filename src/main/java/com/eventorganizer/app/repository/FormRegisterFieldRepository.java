@@ -6,6 +6,5 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 public interface FormRegisterFieldRepository extends JpaRepository<FormRegisterField, Long> {
-//    @Query("SELECT * FROM FormRegisterField WHERE eventid = :eventId")
-//    FormRegisterField findFieldByEventId(@Param("eventId") long eventId);
+    FormRegisterField getFormFieldByeventid(long id);
 }

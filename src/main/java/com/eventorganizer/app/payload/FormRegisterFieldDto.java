@@ -21,6 +21,7 @@ public class FormRegisterFieldDto {
     private String kota;
     private String provinsi;
     private String kelurahan;
+    private String tanggal_lahir;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 }

@@ -28,6 +28,7 @@ public class FormRegisterField {
     private String los;
     private String nik;
     private String mediasosial;
+    private String tanggal_lahir;
     private String no_kk;
     private String agama;
     private String kec;

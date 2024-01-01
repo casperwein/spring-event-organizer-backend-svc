@@ -6,16 +6,20 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
-import org.springframework.web.multipart.MultipartFile;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 
 import java.time.LocalDateTime;
+import java.util.Collection;
+import java.util.List;
 
 @Data
 @Entity
 @NoArgsConstructor
 @AllArgsConstructor
 @Table(name = "users")
-public class User {
+public class UserEntity implements UserDetails {
     @Id
     @GeneratedValue(
             strategy = GenerationType.IDENTITY
@@ -29,9 +33,12 @@ public class User {
     @Column(nullable = false, unique = true)
     private String password;
     private String status;
-    private String role;
     private String telepon;
 //    private MultipartFile gambar;
+
+    @Enumerated(EnumType.STRING)
+    private Role  role;
+
 
     @CreatedDate
     private LocalDateTime createdAt;
@@ -47,4 +54,33 @@ public class User {
         updatedAt = LocalDateTime.now();
     }
 
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        return List.of(new SimpleGrantedAuthority(role.name()));
+    }
+
+    @Override
+    public String getUsername(){
+        return email;
+    }
+
+    @Override
+    public boolean isAccountNonExpired() {
+        return true;
+    }
+
+    @Override
+    public boolean isAccountNonLocked() {
+        return true;
+    }
+
+    @Override
+    public boolean isCredentialsNonExpired() {
+        return true;
+    }
+
+    @Override
+    public boolean isEnabled() {
+        return true;
+    }
 }
