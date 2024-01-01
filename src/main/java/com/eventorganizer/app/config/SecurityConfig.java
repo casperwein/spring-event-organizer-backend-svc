@@ -20,10 +20,10 @@ public class SecurityConfig {
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception{
-        http.csrf()
+         http.csrf()
                 .disable()
                 .authorizeHttpRequests()
-                .requestMatchers("/spring/eo/v1/auth/**")
+                .requestMatchers("/spring/eo/v1/**", "/spring/eo/v1/form/field/event/**")
                 .permitAll()
                 .anyRequest()
                 .authenticated()

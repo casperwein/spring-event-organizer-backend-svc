@@ -1,10 +1,14 @@
 package com.eventorganizer.app.service;
 
+import com.eventorganizer.app.entity.FormRegisterField;
+import com.eventorganizer.app.payload.CustomeResponse;
 import com.eventorganizer.app.payload.FormRegisterFieldDto;
 
 import java.util.List;
 
 public interface FormRegisterService {
-    FormRegisterFieldDto createNewForm(FormRegisterFieldDto formRegisterFieldDto);
-    FormRegisterFieldDto getAllFieldEligible(long eventId);
+    CustomeResponse createNewForm(FormRegisterFieldDto formRegisterFieldDto, long eventId);
+    List<String>  getAllFieldEligible(long eventId);
+    List<FormRegisterFieldDto> getAllFormRegister();
+    FormRegisterFieldDto getFieldRegisterByeventid(long eventId);
 }
