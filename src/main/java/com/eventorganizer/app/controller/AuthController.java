@@ -29,6 +29,7 @@ public class AuthController {
         AuthResponse authResponse = userService.register(request);
         CustomeResponse customeResponse = utils.customeResponses();
         customeResponse.setData(authResponse);
+        customeResponse.setStatusCode(201);
         return new ResponseEntity<>(customeResponse, HttpStatus.CREATED);
     }
 

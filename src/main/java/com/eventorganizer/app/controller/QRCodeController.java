@@ -32,11 +32,7 @@ public class QRCodeController {
 
     @GetMapping("/scan/{id}")
     public ResponseEntity<CustomeResponse> scanQrCode(@PathVariable(value = "id") long id){
-        CustomeResponse customeResponse = utils.customeResponses();
-        String response = qrCodeService.scanQRCode(id);
-        Map<String, Object> data = new HashMap<>();
-        data.put("message", response);
-        customeResponse.setData(data);
-        return new ResponseEntity<>(customeResponse, HttpStatus.OK);
+        CustomeResponse customeResponse = qrCodeService.scanQRCode(id);
+        return new ResponseEntity<>(customeResponse, HttpStatus.valueOf(customeResponse.getStatusCode()));
     }
 }

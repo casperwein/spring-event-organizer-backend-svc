@@ -8,7 +8,7 @@ import java.util.List;
 
 public interface FormRegisterService {
     CustomeResponse createNewForm(FormRegisterFieldDto formRegisterFieldDto, long eventId);
-    List<String>  getAllFieldEligible(long eventId);
+    CustomeResponse  getAllFieldEligible(long eventId);
     List<FormRegisterFieldDto> getAllFormRegister();
     FormRegisterFieldDto getFieldRegisterByeventid(long eventId);
 }
