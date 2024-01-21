@@ -11,7 +11,9 @@ import org.springframework.stereotype.Service;
 import java.lang.reflect.Field;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Service
@@ -50,7 +52,7 @@ public class FormRegisterServiceImpl implements FormRegisterService {
     }
 
     @Override
-    public List<String> getAllFieldEligible(long eventId) {
+    public CustomeResponse getAllFieldEligible(long eventId) {
         FormRegisterField formField = formFieldRepo.getFormFieldByeventid(eventId);
         List<String> fieldsEligible = new ArrayList<>();
         Field[] fields = formField.getClass().getDeclaredFields();
@@ -67,9 +69,14 @@ public class FormRegisterServiceImpl implements FormRegisterService {
                 fieldsEligible.add(field.getName());
             }
         }
-
         List<String> formMaster = formMasterRepo.getValueValidField(fieldsEligible);
-        return formMaster;
+        CustomeResponse customeResponse = new CustomeResponse();
+        Map<String, Object> data = new HashMap<>();
+        data.put("fieldEligible", fieldsEligible);
+        data.put("fieldData", formMaster);
+        customeResponse.setData(data);
+
+        return customeResponse;
     }
 
     @Override

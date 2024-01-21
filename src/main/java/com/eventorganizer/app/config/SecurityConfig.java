@@ -23,7 +23,7 @@ public class SecurityConfig {
          http.csrf()
                 .disable()
                 .authorizeHttpRequests()
-                .requestMatchers("/spring/eo/v1/**", "/spring/eo/v1/form/field/event/**")
+                .requestMatchers("/spring/eo/v1/**", "/spring/eo/v1/form/field/event/**",   "/spring/eo/v1/user/**")
                 .permitAll()
                 .anyRequest()
                 .authenticated()

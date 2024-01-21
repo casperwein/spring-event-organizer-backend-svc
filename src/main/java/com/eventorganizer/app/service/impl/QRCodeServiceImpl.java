@@ -3,6 +3,7 @@ package com.eventorganizer.app.service.impl;
 import com.eventorganizer.app.entity.Events;
 import com.eventorganizer.app.entity.Peserta;
 import com.eventorganizer.app.entity.QRCodeEntity;
+import com.eventorganizer.app.payload.CustomeResponse;
 import com.eventorganizer.app.payload.QRCodeDto;
 import com.eventorganizer.app.repository.PesertaRepository;
 import com.eventorganizer.app.repository.QRCodeRepository;
@@ -120,11 +121,25 @@ public class QRCodeServiceImpl implements QRCodeService {
     }
 
     @Override
-    public String scanQRCode(long id) {
+    public CustomeResponse scanQRCode(long id) {
         QRCodeEntity qrCodeEntity = qrCodeRepository.findBarcodeById(id);
-        qrCodeEntity.setStatus("CLOSE");
-        qrCodeRepository.save(qrCodeEntity);
-        return "Update Successfully";
+        CustomeResponse customeResponse = new CustomeResponse<>();
+        customeResponse.setStatusCode(200);
+
+        if(qrCodeEntity != null){
+            String currentStatus = qrCodeEntity.getStatus();
+            if("OPEN".equalsIgnoreCase(currentStatus)){
+                qrCodeEntity.setStatus("CLOSED");
+                qrCodeRepository.save(qrCodeEntity);
+                customeResponse.setMessage("Scan QR Code Berhasil!");
+            } else {
+                customeResponse.setMessage("QR Code telah digunakan!!");
+            }
+        } else {
+            customeResponse.setMessage("Data Tidak Ditemukan!");
+            customeResponse.setStatusCode(404);
+        }
+        return customeResponse;
     }
 
     public QRCodeDto mapToDTO(QRCodeEntity qrCodeEntity){
