@@ -58,6 +58,7 @@ public class EventsController {
     @PutMapping("/{id}")
     public ResponseEntity<CustomeResponse> updateEvent(@PathVariable(name = "id") long id, @RequestBody EventsDto eventsDto){
         EventsDto event = eventsService.updateEvent(eventsDto, id);
+        System.out.println(id);
         CustomeResponse customeResponse = utils.customeResponses();
         List<EventsDto> eventsDtoList = new ArrayList<>();
         eventsDtoList.add(event);

@@ -34,12 +34,11 @@ public class FormRegisterServiceImpl implements FormRegisterService {
             LocalDateTime date = LocalDateTime.now();
             formRegisterFieldDto.setCreatedAt(fields.getCreatedAt());
             formRegisterFieldDto.setUpdatedAt(date);
-            System.out.println(formRegisterFieldDto);
 
             FormRegisterField fieldsUpdated = mapToEntity(formRegisterFieldDto, fields);
             formFieldRepo.save(fieldsUpdated);
             customeResponse.setData("Update Form Succesfully!");
-        }else {
+        } else {
             FormRegisterField fieldEntity = new FormRegisterField();
             FormRegisterField fieldRequired = mapToEntity(formRegisterFieldDto, fieldEntity);
             fieldRequired.setEventid(eventId);

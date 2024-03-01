@@ -42,8 +42,6 @@ public class PesertaServiceImpl implements PesertaService {
         Events event = eventsRepository.findById(eventId).orElseThrow(() -> new ResourceNotFoundException("event", "id", eventId));
         long totalRegistered = pesertaRepository.getTotalPesertaByEventId(eventId);
 
-//        Date date = new Date();
-//        LocalDateTime dateNow = date.toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime();
         LocalDateTime now = LocalDateTime.now();
         Utils utils = new Utils();
         CustomeResponse customeResponse = utils.customeResponses();
