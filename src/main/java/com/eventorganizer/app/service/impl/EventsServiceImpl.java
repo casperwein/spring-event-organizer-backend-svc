@@ -33,16 +33,19 @@ public class EventsServiceImpl implements EventsService {
 
     @Override
     public EventsDto createEvents(EventsDto eventsDto) {
+        Events eventEntity = new Events();
         String pathFile = fileService.saveFile(eventsDto.getFile());
         eventsDto.setEventpathfiledesc(pathFile);
-        Events events = mapToEntity(eventsDto);
-        events.setStatus("OPEN");
 
+        Events events = mapToEntity(eventsDto, eventEntity);
+        events.setStatus("OPEN");
         Events newEvent = eventsRepository.save(events);
         long eventId = newEvent.getId();
-        String pathLinkRegistration = "file:///E:/DEVELOPER/event-organizer/registration/index.html?event=";
+        String pathLinkRegistration = "file:///E:/DEVELOPER/event-organizer/registration-form/index.html?event=";
         events.setLinkregistration(pathLinkRegistration + eventId);
         eventsRepository.save(newEvent);
+
+        System.out.println(events.getLinkregistration());
 
         EventsDto response = mapToDto(newEvent);
         return response;
@@ -52,21 +55,9 @@ public class EventsServiceImpl implements EventsService {
     public EventsDto updateEvent(EventsDto eventsDto, long id) {
         Events events = eventsRepository.findById(id).orElseThrow(
                 ()-> new ResourceNotFoundException("Event", "id", id));
-
-        events.setNama(eventsDto.getNama());
-        events.setTempat(eventsDto.getTempat());
-        events.setStart_date(eventsDto.getStart_date());
-        events.setEnd_date(eventsDto.getEnd_date());
-        events.setLengthofevent(eventsDto.getLengthofevent());
-        events.setKapasitas(eventsDto.getKapasitas());
-        events.setKeterangan(eventsDto.getKeterangan());
-        events.setEventpathfiledesc(eventsDto.getEventpathfiledesc());
-        events.setStatus(eventsDto.getStatus());
-        events.setLinkregistration(eventsDto.getLinkregistration());
-
-        eventsRepository.save(events);
-
-        EventsDto eventRes = mapToDto(events);
+        Events event = mapToEntity(eventsDto, events);
+        eventsRepository.save(event);
+        EventsDto eventRes = mapToDto(event);
 
         return eventRes;
     }
@@ -181,8 +172,7 @@ public class EventsServiceImpl implements EventsService {
         return eventsDto;
     }
 
-    public Events mapToEntity(EventsDto eventsDto){
-        Events events = new Events();
+    public Events mapToEntity(EventsDto eventsDto, Events events){
 
         events.setId(eventsDto.getId());
         events.setNama(eventsDto.getNama());
